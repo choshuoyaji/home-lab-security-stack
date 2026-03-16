@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "skills": {
+    "gmail": {
+      "version": "1.0.6",
+      "installedAt": 1772850482174
+    },
+    "gog-calendar": {
+      "version": "1.0.0",
+      "installedAt": 1772850487183
+    }
+  }
+}

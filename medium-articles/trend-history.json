@@ -1,0 +1,16 @@
+[
+  {
+    "date": "2026-03-16",
+    "category": "product-security",
+    "momentum_scores": {
+      "product-security": 115,
+      "cloud-security": 104,
+      "ai-security": 103,
+      "incident-response": 100,
+      "security-monitoring": 93,
+      "detection-engineering": 92,
+      "soar": 87,
+      "edr-xdr": 76
+    }
+  }
+]

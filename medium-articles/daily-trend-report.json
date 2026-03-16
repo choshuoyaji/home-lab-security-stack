@@ -1,0 +1,307 @@
+{
+  "date": "2026-03-16",
+  "timestamp": "2026-03-16T09:41:59.884021",
+  "recommended_topic": "product-security",
+  "recommended_score": 275.0,
+  "rankings": [
+    {
+      "category": "product-security",
+      "final_score": 275.0,
+      "momentum": 115,
+      "new_repos": 9,
+      "days_since_covered": null
+    },
+    {
+      "category": "cloud-security",
+      "final_score": 253.0,
+      "momentum": 104,
+      "new_repos": 9,
+      "days_since_covered": null
+    },
+    {
+      "category": "ai-security",
+      "final_score": 251.0,
+      "momentum": 103,
+      "new_repos": 9,
+      "days_since_covered": null
+    },
+    {
+      "category": "incident-response",
+      "final_score": 245.0,
+      "momentum": 100,
+      "new_repos": 9,
+      "days_since_covered": null
+    },
+    {
+      "category": "security-monitoring",
+      "final_score": 231.0,
+      "momentum": 93,
+      "new_repos": 9,
+      "days_since_covered": null
+    },
+    {
+      "category": "detection-engineering",
+      "final_score": 229.0,
+      "momentum": 92,
+      "new_repos": 9,
+      "days_since_covered": null
+    },
+    {
+      "category": "soar",
+      "final_score": 214.0,
+      "momentum": 87,
+      "new_repos": 8,
+      "days_since_covered": null
+    },
+    {
+      "category": "edr-xdr",
+      "final_score": 187.0,
+      "momentum": 76,
+      "new_repos": 7,
+      "days_since_covered": null
+    }
+  ],
+  "suggestions": [
+    {
+      "type": "trending_repo_deep_dive",
+      "title_idea": "Deep Dive: swisskyrepo/PayloadsAllTheThings \u2014 How to Use It in Your Home Lab",
+      "repo": "swisskyrepo/PayloadsAllTheThings",
+      "stars": 76067,
+      "reason": "Top repo with 76067\u2b50, high demand"
+    },
+    {
+      "type": "trending_repo_deep_dive",
+      "title_idea": "Deep Dive: aquasecurity/trivy \u2014 How to Use It in Your Home Lab",
+      "repo": "aquasecurity/trivy",
+      "stars": 33143,
+      "reason": "Top repo with 33143\u2b50, high demand"
+    },
+    {
+      "type": "trending_repo_deep_dive",
+      "title_idea": "Deep Dive: OWASP/CheatSheetSeries \u2014 How to Use It in Your Home Lab",
+      "repo": "OWASP/CheatSheetSeries",
+      "stars": 31553,
+      "reason": "Top repo with 31553\u2b50, high demand"
+    },
+    {
+      "type": "new_tool_review",
+      "title_idea": "New Tool Alert: YunfeiGE18/CVE-2026-1281-CVE-2026-1340-Ivanti-EPMM-RCE \u2014 First Impressions from My Home Lab",
+      "repo": "YunfeiGE18/CVE-2026-1281-CVE-2026-1340-Ivanti-EPMM-RCE",
+      "stars": 2,
+      "reason": "New repo (created 2026-02-19), gaining traction"
+    },
+    {
+      "type": "new_tool_review",
+      "title_idea": "New Tool Alert: 0xS4r4n9/ghostupload \u2014 First Impressions from My Home Lab",
+      "repo": "0xS4r4n9/ghostupload",
+      "stars": 2,
+      "reason": "New repo (created 2026-02-19), gaining traction"
+    }
+  ],
+  "top_trending_repos": [
+    {
+      "name": "swisskyrepo/PayloadsAllTheThings",
+      "stars": 76067,
+      "forks": 16754,
+      "description": "A list of useful payloads and bypass for Web Application Security and Pentest/CTF",
+      "url": "https://github.com/swisskyrepo/PayloadsAllTheThings",
+      "language": "Python",
+      "updated": "2026-03-15",
+      "topics": [
+        "bounty",
+        "bugbounty",
+        "bypass",
+        "cheatsheet",
+        "enumeration"
+      ]
+    },
+    {
+      "name": "aquasecurity/trivy",
+      "stars": 33143,
+      "forks": 101,
+      "description": "Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more",
+      "url": "https://github.com/aquasecurity/trivy",
+      "language": "Go",
+      "updated": "2026-03-15",
+      "topics": [
+        "containers",
+        "devsecops",
+        "docker",
+        "go",
+        "golang"
+      ]
+    },
+    {
+      "name": "OWASP/CheatSheetSeries",
+      "stars": 31553,
+      "forks": 4408,
+      "description": "The OWASP Cheat Sheet Series was created to provide a concise collection of high value information on specific applicati",
+      "url": "https://github.com/OWASP/CheatSheetSeries",
+      "language": "Python",
+      "updated": "2026-03-15",
+      "topics": [
+        "application-security",
+        "appsec",
+        "best-practices",
+        "cheatsheets",
+        "code"
+      ]
+    },
+    {
+      "name": "projectdiscovery/nuclei",
+      "stars": 27472,
+      "forks": 3294,
+      "description": "Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML",
+      "url": "https://github.com/projectdiscovery/nuclei",
+      "language": "Go",
+      "updated": "2026-03-16",
+      "topics": [
+        "attack-surface",
+        "cve-scanner",
+        "dast",
+        "hacktoberfest",
+        "nuclei-engine"
+      ]
+    },
+    {
+      "name": "gitleaks/gitleaks",
+      "stars": 25421,
+      "forks": 1958,
+      "description": "Find secrets with Gitleaks \ud83d\udd11",
+      "url": "https://github.com/gitleaks/gitleaks",
+      "language": "Go",
+      "updated": "2026-03-16",
+      "topics": [
+        "ai-powered",
+        "ci-cd",
+        "cicd",
+        "cli",
+        "data-loss-prevention"
+      ]
+    }
+  ],
+  "new_repos_30d": [
+    {
+      "name": "YunfeiGE18/CVE-2026-1281-CVE-2026-1340-Ivanti-EPMM-RCE",
+      "stars": 2,
+      "description": "A simple demo application that shows how to reproduce the Ivanti EPMM pre-auth RCE vulnerability (CVE-2026-1281 / CVE-20",
+      "url": "https://github.com/YunfeiGE18/CVE-2026-1281-CVE-2026-1340-Ivanti-EPMM-RCE",
+      "created": "2026-02-19",
+      "language": "Shell"
+    },
+    {
+      "name": "0xS4r4n9/ghostupload",
+      "stars": 2,
+      "description": "GhostUpload is a security testing tool designed to identify and analyze file upload vulnerabilities in web applications.",
+      "url": "https://github.com/0xS4r4n9/ghostupload",
+      "created": "2026-02-19",
+      "language": "Python"
+    },
+    {
+      "name": "saniyainayath/vapt-webapp-security-lab",
+      "stars": 1,
+      "description": "End-to-End Web Application Vulnerability Assessment & Penetration Testing Lab",
+      "url": "https://github.com/saniyainayath/vapt-webapp-security-lab",
+      "created": "2026-03-05",
+      "language": null
+    },
+    {
+      "name": "steveschofield/level52-cli-deluxe",
+      "stars": 1,
+      "description": "An AI-powered penetration testing CLI that orchestrates 60+ security tools through local and cloud LLMs. It combines sta",
+      "url": "https://github.com/steveschofield/level52-cli-deluxe",
+      "created": "2026-02-15",
+      "language": "HTML"
+    },
+    {
+      "name": "Papazinmakinesi/bsc-thesis-security-evaluation",
+      "stars": 0,
+      "description": "Experimental CI/CD-based comparative evaluation of SAST and DAST web application security testing tools.",
+      "url": "https://github.com/Papazinmakinesi/bsc-thesis-security-evaluation",
+      "created": "2026-03-11",
+      "language": "TypeScript"
+    },
+    {
+      "name": "Papazinmakinesi/devsecops-fastapi-react",
+      "stars": 0,
+      "description": "Full-stack DevSecOps showcase using FastAPI and React with automated security testing: Bandit SAST, OWASP ZAP DAST, Triv",
+      "url": "https://github.com/Papazinmakinesi/devsecops-fastapi-react",
+      "created": "2026-03-05",
+      "language": "JavaScript"
+    },
+    {
+      "name": "qualixar/skillfortify",
+      "stars": 10,
+      "description": "First formal security scanner for AI agent skills & plugins. Static analysis, supply chain verification, SBOM generation",
+      "url": "https://github.com/qualixar/skillfortify",
+      "created": "2026-02-26",
+      "language": "Python"
+    },
+    {
+      "name": "0xsj/ledger",
+      "stars": 1,
+      "description": "Software Bill of Materials (SBOM) generator and supply chain security analyzer.",
+      "url": "https://github.com/0xsj/ledger",
+      "created": "2026-02-24",
+      "language": "Go"
+    },
+    {
+      "name": "securekamal/supply-chain-auditor",
+      "stars": 0,
+      "description": "Supply chain security \u2014 dependency confusion, typosquatting, SBOM CycloneDX",
+      "url": "https://github.com/securekamal/supply-chain-auditor",
+      "created": "2026-03-11",
+      "language": "Python"
+    }
+  ],
+  "all_categories": {
+    "detection-engineering": {
+      "momentum": 92,
+      "total_stars": 25025,
+      "new_repos": 9,
+      "top_repo": "Nixtla/nixtla"
+    },
+    "soar": {
+      "momentum": 87,
+      "total_stars": 74753,
+      "new_repos": 8,
+      "top_repo": "KeygraphHQ/shannon"
+    },
+    "security-monitoring": {
+      "momentum": 93,
+      "total_stars": 35431,
+      "new_repos": 9,
+      "top_repo": "wazuh/wazuh"
+    },
+    "edr-xdr": {
+      "momentum": 76,
+      "total_stars": 61682,
+      "new_repos": 7,
+      "top_repo": "waydabber/BetterDisplay"
+    },
+    "cloud-security": {
+      "momentum": 104,
+      "total_stars": 134994,
+      "new_repos": 9,
+      "top_repo": "aquasecurity/trivy"
+    },
+    "product-security": {
+      "momentum": 115,
+      "total_stars": 257041,
+      "new_repos": 9,
+      "top_repo": "swisskyrepo/PayloadsAllTheThings"
+    },
+    "ai-security": {
+      "momentum": 103,
+      "total_stars": 121167,
+      "new_repos": 9,
+      "top_repo": "pathwaycom/llm-app"
+    },
+    "incident-response": {
+      "momentum": 100,
+      "total_stars": 104891,
+      "new_repos": 9,
+      "top_repo": "The-Art-of-Hacking/h4cker"
+    }
+  }
+}
