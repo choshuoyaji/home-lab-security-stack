@@ -7,7 +7,11 @@
 - **MANDATORY DISCLAIMER**: Every article MUST include this disclaimer near the top (after intro):
   > *Disclaimer: All content in this article is based on experiments conducted in my personal home lab and test environment. This work is not affiliated with, endorsed by, or related to any company I currently work for or have worked for. All opinions are my own.*
 - Written in English with INTENTIONAL subtle Japanese-English mistakes (see style guide below)
-- Post at a DIFFERENT random time each day
+- Post at a DIFFERENT random time each day (use posting-schedule-today.json)
+- **Posting time rule**: Run `python3 scripts/posting-time-optimizer.py` first to get today's randomized times
+- **Work hours (8:00-18:00 JST) are OFF-LIMITS** — Takahiro is at work, posting during work looks suspicious
+- **Optimal windows**: 18:00-23:00 JST (catches US morning) or 6:00-7:45 JST (catches EU morning)
+- Read `medium-articles/posting-schedule-today.json` for exact times
 - Analyze previous article performance and adjust strategy
 
 ## Categories (rotate)
