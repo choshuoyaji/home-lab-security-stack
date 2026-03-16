@@ -3,22 +3,22 @@
   "day": "Monday",
   "is_weekend": false,
   "medium": {
-    "time_jst": "22:58",
+    "time_jst": "20:11",
     "window_reason": "US East Coast morning peak, EU afternoon",
     "day_score": 0.9,
-    "utc_equivalent": "13:58 UTC",
-    "us_eastern": "08:58 EST"
+    "utc_equivalent": "11:11 UTC",
+    "us_eastern": "06:11 EST"
   },
   "devto": {
-    "time_jst": "02:58",
+    "time_jst": "00:11",
     "note": "4 hours after Medium (canonical_url cross-post)"
   },
   "linkedin": {
-    "time_jst": "20:21",
+    "time_jst": "18:59",
     "window_reason": "LinkedIn peak: US morning, EU afternoon engagement",
     "day_score": 0.8,
-    "utc_equivalent": "11:21 UTC",
-    "us_eastern": "06:21 EST"
+    "utc_equivalent": "09:59 UTC",
+    "us_eastern": "04:59 EST"
   },
   "recommendations": []
 }

@@ -61,7 +61,7 @@ Sprinkle 3-5 of these per article — NOT in every sentence, just enough to feel
 | Date | Category | Title | Time Posted | Views | Claps | Link |
 |------|----------|-------|-------------|-------|-------|------|
 | 2026-03-15 | Detection Engineering | Series 1 ~Sigma Rules~ | 20:40 JST | TBD | TBD | https://takahiro-oda.medium.com/detection-engineering-in-my-home-lab-series-1-building-20-sigma-rules-for-multi-source-threat-614015b067e8 |
-| 2026-03-16 | SOAR | Series 1 ~SOAR Pipeline~ | TBD | - | - | - |
+| 2026-03-16 | Product Security | Series 1 ~Vulnerability Response Pipeline~ | 13:01 JST | TBD | TBD | https://takahiro-oda.medium.com/product-security-in-my-home-lab-series-1-building-an-automated-vulnerability-response-pipeline-17a579462805 |
 | 2026-03-17 | Security Monitoring | Series 1 ~Multi-Source Platform~ | TBD | - | - | - |
 | 2026-03-18 | EDR/XDR | Series 1 ~EDR Optimization~ | TBD | - | - | - |
 | 2026-03-19 | Cloud Security | Series 1 ~IAM Migration~ | TBD | - | - | - |
@@ -72,8 +72,11 @@ Sprinkle 3-5 of these per article — NOT in every sentence, just enough to feel
 - **Repo**: https://github.com/choshuoyaji/home-lab-security-stack
 - Every article MUST have corresponding code/config pushed to the GitHub repo
 - Article must link to the GitHub repo (and specific files/directories)
-- GitHub README must link back to the article
-- Update the repo's article table in README.md after each publish
+- **MUST update README.md** on every push:
+  - Update the article series table with new article links
+  - Update "Home Lab Environment" if new tools are introduced
+  - Update directory descriptions if new content is added
+  - Keep README fresh and accurate — it's the repo's landing page
 - Each article's code goes in the matching directory (e.g., detection-engineering/ for Detection Engineering articles)
 - This creates a virtuous cycle: Medium → GitHub → more stars → more Medium reads
 

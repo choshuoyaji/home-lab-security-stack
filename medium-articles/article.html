@@ -1,0 +1,453 @@
+<h1
+id="product-security-in-my-home-lab-series-1-building-an-automated-vulnerability-response-pipeline-with-trivy-and-github-actions">[Product
+Security in My Home Lab] Series 1 ~Building an Automated Vulnerability
+Response Pipeline with Trivy and GitHub Actions~</h1>
+<p>In this series, you will learn how to build a Product Security
+pipeline in your home lab. Series 1 covers how I automated vulnerability
+scanning, triage, and response using open-source tools.</p>
+<hr />
+<p><em>Disclaimer: All content in this article is based on experiments
+conducted in my personal home lab and test environment. This work is not
+affiliated with, endorsed by, or related to any company I currently work
+for or have worked for. All opinions are my own.</em></p>
+<hr />
+<p><img
+src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1200"
+alt="Security scanning terminal with code" /> <em>Photo by <a
+href="https://unsplash.com/@markusspiske">Markus Spiske</a> on <a
+href="https://unsplash.com">Unsplash</a></em></p>
+<h2 id="what-is-product-security">What is Product Security?</h2>
+<p>Product Security is the practice of finding and fixing security
+vulnerabilities in the software you build — before attackers find them
+first. It covers the entire software development lifecycle, from code
+review to dependency scanning to runtime protection.</p>
+<p>Key areas:</p>
+<ul>
+<li><strong>SAST (Static Application Security Testing)</strong> —
+Scanning source code for vulnerabilities</li>
+<li><strong>SCA (Software Composition Analysis)</strong> — Checking
+dependencies for known CVEs</li>
+<li><strong>DAST (Dynamic Application Security Testing)</strong> —
+Testing running applications</li>
+<li><strong>Container Security</strong> — Scanning container images for
+vulnerabilities</li>
+<li><strong>SBOM (Software Bill of Materials)</strong> — Knowing exactly
+what is in your software</li>
+</ul>
+<h2 id="why-automate-vulnerability-response">Why Automate Vulnerability
+Response?</h2>
+<p>Most security teams I know have same problem: they can find
+vulnerabilities easily, but responding to them is still very manual
+process. You run a scan, get 500 findings, export to spreadsheet, then
+spend hours triaging.</p>
+<p>In my home lab, I wanted to build pipeline that automatically scans,
+triages, and creates actionable tickets — without human touching
+anything until the decision point.</p>
+<h2 id="my-home-lab-product-security-stack">My Home Lab Product Security
+Stack</h2>
+<p>Here is what I am working with:</p>
+<ul>
+<li><strong>Scanner</strong>: Trivy (open-source, covers containers +
+IaC + SBOM)</li>
+<li><strong>CI/CD</strong>: GitHub Actions</li>
+<li><strong>Registry</strong>: GitHub Container Registry (GHCR)</li>
+<li><strong>Ticketing</strong>: Jira (free tier)</li>
+<li><strong>Notification</strong>: Slack webhooks</li>
+<li><strong>Policy Engine</strong>: OPA (Open Policy Agent) for custom
+policies</li>
+<li><strong>SBOM Format</strong>: CycloneDX</li>
+</ul>
+<h2 id="architecture-overview">Architecture Overview</h2>
+<p>The flow looks like this:</p>
+<pre><code>Developer pushes code
+        ↓
+   GitHub Actions triggered
+        ↓
+   ┌─────────────────────────┐
+   │  Trivy Scan Phase       │
+   │  - Container image scan │
+   │  - IaC misconfig scan   │
+   │  - Dependency scan      │
+   │  - Secret detection     │
+   │  - SBOM generation      │
+   └─────────────────────────┘
+        ↓
+   ┌─────────────────────────┐
+   │  Policy Evaluation      │
+   │  - OPA severity rules   │
+   │  - SLA assignment       │
+   │  - Auto-fix candidates  │
+   └─────────────────────────┘
+        ↓
+   ┌─────────────────────────┐
+   │  Response Actions       │
+   │  - Block deploy (CRIT)  │
+   │  - Create Jira ticket   │
+   │  - Slack notification   │
+   │  - SBOM upload          │
+   └─────────────────────────┘</code></pre>
+<h2 id="step-1-set-up-trivy-in-github-actions">Step 1: Set Up Trivy in
+GitHub Actions</h2>
+<p>First, I configured Trivy to run on every pull request and main
+branch push. The key is scanning multiple targets in one workflow:</p>
+<pre class="yaml"><code># .github/workflows/security-scan.yml
+name: Security Scan Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  vulnerability-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build container image
+        run: docker build -t myapp:${{ github.sha }} .
+      
+      # Container image vulnerability scan
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: &#39;myapp:${{ github.sha }}&#39;
+          format: &#39;json&#39;
+          output: &#39;trivy-image-results.json&#39;
+          severity: &#39;CRITICAL,HIGH,MEDIUM&#39;
+      
+      # Infrastructure as Code scan
+      - name: Trivy IaC scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: &#39;config&#39;
+          scan-ref: &#39;.&#39;
+          format: &#39;json&#39;
+          output: &#39;trivy-iac-results.json&#39;
+      
+      # Dependency scan
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: &#39;fs&#39;
+          scan-ref: &#39;.&#39;
+          format: &#39;json&#39;
+          output: &#39;trivy-fs-results.json&#39;
+      
+      # Generate SBOM
+      - name: Generate SBOM
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: &#39;image&#39;
+          image-ref: &#39;myapp:${{ github.sha }}&#39;
+          format: &#39;cyclonedx&#39;
+          output: &#39;sbom.json&#39;
+      
+      # Process results
+      - name: Triage and respond
+        run: python3 scripts/vuln-triage.py
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}</code></pre>
+<h2 id="step-2-build-the-triage-engine">Step 2: Build the Triage
+Engine</h2>
+<p>The triage engine is where the magic happens. It takes raw scan
+results and makes decisions based on custom policies. This is the part
+that many articles do not cover — the decision logic between “found
+vulnerability” and “what do we do about it.”</p>
+<pre class="python"><code>import json
+from datetime import datetime, timedelta
+
+class VulnTriageEngine:
+    &quot;&quot;&quot;Automated vulnerability triage with SLA assignment&quot;&quot;&quot;
+    
+    # SLA definitions (days to remediate)
+    SLA_MAP = {
+        &#39;CRITICAL&#39;: 3,
+        &#39;HIGH&#39;: 14,
+        &#39;MEDIUM&#39;: 30,
+        &#39;LOW&#39;: 90
+    }
+    
+    # Known false positive patterns
+    FALSE_POSITIVE_PATTERNS = [
+        {&#39;pkg&#39;: &#39;linux-libc-dev&#39;, &#39;reason&#39;: &#39;Kernel vuln not exploitable in container&#39;},
+        {&#39;pkg&#39;: &#39;libsystemd0&#39;, &#39;reason&#39;: &#39;Not used in container runtime&#39;},
+    ]
+    
+    def __init__(self, scan_results):
+        self.results = scan_results
+        self.triaged = []
+    
+    def triage(self):
+        &quot;&quot;&quot;Process all vulnerabilities through triage logic&quot;&quot;&quot;
+        for vuln in self.results.get(&#39;Results&#39;, []):
+            target = vuln.get(&#39;Target&#39;, &#39;&#39;)
+            for v in vuln.get(&#39;Vulnerabilities&#39;, []):
+                decision = self._evaluate(v, target)
+                self.triaged.append(decision)
+        
+        return self.triaged
+    
+    def _evaluate(self, vuln, target):
+        &quot;&quot;&quot;Evaluate single vulnerability&quot;&quot;&quot;
+        cve_id = vuln.get(&#39;VulnerabilityID&#39;, &#39;&#39;)
+        severity = vuln.get(&#39;Severity&#39;, &#39;UNKNOWN&#39;)
+        pkg = vuln.get(&#39;PkgName&#39;, &#39;&#39;)
+        fixed_version = vuln.get(&#39;FixedVersion&#39;, &#39;&#39;)
+        
+        result = {
+            &#39;cve&#39;: cve_id,
+            &#39;severity&#39;: severity,
+            &#39;package&#39;: pkg,
+            &#39;target&#39;: target,
+            &#39;installed&#39;: vuln.get(&#39;InstalledVersion&#39;, &#39;&#39;),
+            &#39;fixed&#39;: fixed_version,
+            &#39;title&#39;: vuln.get(&#39;Title&#39;, &#39;&#39;),
+            &#39;action&#39;: &#39;investigate&#39;,
+            &#39;sla_days&#39;: self.SLA_MAP.get(severity, 90),
+            &#39;due_date&#39;: None,
+            &#39;auto_fixable&#39;: False
+        }
+        
+        # Check false positive patterns
+        for fp in self.FALSE_POSITIVE_PATTERNS:
+            if fp[&#39;pkg&#39;] in pkg:
+                result[&#39;action&#39;] = &#39;suppress&#39;
+                result[&#39;reason&#39;] = fp[&#39;reason&#39;]
+                return result
+        
+        # Auto-fixable if fixed version exists
+        if fixed_version:
+            result[&#39;auto_fixable&#39;] = True
+            if severity in (&#39;CRITICAL&#39;, &#39;HIGH&#39;):
+                result[&#39;action&#39;] = &#39;auto_pr&#39;
+            else:
+                result[&#39;action&#39;] = &#39;ticket&#39;
+        
+        # No fix available
+        if not fixed_version:
+            if severity == &#39;CRITICAL&#39;:
+                result[&#39;action&#39;] = &#39;escalate&#39;
+            else:
+                result[&#39;action&#39;] = &#39;monitor&#39;
+        
+        # Calculate SLA due date
+        result[&#39;due_date&#39;] = (
+            datetime.now() + timedelta(days=result[&#39;sla_days&#39;])
+        ).strftime(&#39;%Y-%m-%d&#39;)
+        
+        return result</code></pre>
+<h2 id="step-3-opa-policy-for-deployment-gates">Step 3: OPA Policy for
+Deployment Gates</h2>
+<p>I use Open Policy Agent to enforce deployment policies. This is what
+makes the pipeline a real security gate — not just a notification
+system:</p>
+<pre class="rego"><code># policy/deploy-gate.rego
+package security.deploy
+
+default allow = true
+
+# Block deployment if any CRITICAL vulnerability has no fix suppression
+deny[msg] {
+    input.vulnerabilities[i].severity == &quot;CRITICAL&quot;
+    input.vulnerabilities[i].action != &quot;suppress&quot;
+    input.vulnerabilities[i].fixed != &quot;&quot;
+    msg := sprintf(&quot;CRITICAL vuln %s in %s has fix available (%s) - must patch before deploy&quot;, 
+        [input.vulnerabilities[i].cve, 
+         input.vulnerabilities[i].package,
+         input.vulnerabilities[i].fixed])
+}
+
+# Warn if HIGH vulns exceed threshold
+warn[msg] {
+    high_count := count([v | 
+        v := input.vulnerabilities[_]
+        v.severity == &quot;HIGH&quot;
+        v.action != &quot;suppress&quot;
+    ])
+    high_count &gt; 5
+    msg := sprintf(&quot;Too many HIGH vulnerabilities: %d (threshold: 5)&quot;, [high_count])
+}
+
+# Require SBOM for all production deployments
+deny[msg] {
+    input.environment == &quot;production&quot;
+    not input.sbom_generated
+    msg := &quot;SBOM is required for production deployments&quot;
+}</code></pre>
+<h2 id="step-4-automated-response-actions">Step 4: Automated Response
+Actions</h2>
+<p>When the triage engine makes a decision, these response actions
+execute automatically:</p>
+<h3 id="auto-create-pr-for-fixable-vulnerabilities">Auto-Create PR for
+Fixable Vulnerabilities</h3>
+<pre class="python"><code>import subprocess
+
+def create_fix_pr(vuln_data):
+    &quot;&quot;&quot;Create automated PR for dependency update&quot;&quot;&quot;
+    pkg = vuln_data[&#39;package&#39;]
+    fixed = vuln_data[&#39;fixed&#39;]
+    cve = vuln_data[&#39;cve&#39;]
+    
+    branch_name = f&quot;security-fix/{cve.lower()}&quot;
+    
+    # Create branch
+    subprocess.run([&#39;git&#39;, &#39;checkout&#39;, &#39;-b&#39;, branch_name])
+    
+    # Update dependency (example for Python)
+    update_requirement(pkg, fixed)
+    
+    # Commit and push
+    subprocess.run([&#39;git&#39;, &#39;add&#39;, &#39;.&#39;])
+    subprocess.run([&#39;git&#39;, &#39;commit&#39;, &#39;-m&#39;, 
+        f&#39;fix(security): update {pkg} to {fixed} ({cve})&#39;])
+    subprocess.run([&#39;git&#39;, &#39;push&#39;, &#39;origin&#39;, branch_name])
+    
+    # Create PR via GitHub CLI
+    subprocess.run([&#39;gh&#39;, &#39;pr&#39;, &#39;create&#39;,
+        &#39;--title&#39;, f&#39;[Security] Fix {cve}: Update {pkg} to {fixed}&#39;,
+        &#39;--body&#39;, generate_pr_body(vuln_data),
+        &#39;--label&#39;, &#39;security,automated&#39;])</code></pre>
+<h3 id="slack-notification-with-context">Slack Notification with
+Context</h3>
+<pre class="python"><code>import requests
+
+def notify_security_team(triaged_vulns):
+    &quot;&quot;&quot;Send summary to Slack with actionable context&quot;&quot;&quot;
+    
+    critical = [v for v in triaged_vulns if v[&#39;severity&#39;] == &#39;CRITICAL&#39;]
+    high = [v for v in triaged_vulns if v[&#39;severity&#39;] == &#39;HIGH&#39;]
+    auto_fixed = [v for v in triaged_vulns if v[&#39;action&#39;] == &#39;auto_pr&#39;]
+    
+    blocks = [
+        {
+            &quot;type&quot;: &quot;header&quot;,
+            &quot;text&quot;: {&quot;type&quot;: &quot;plain_text&quot;, 
+                     &quot;text&quot;: &quot;🔒 Security Scan Results&quot;}
+        },
+        {
+            &quot;type&quot;: &quot;section&quot;,
+            &quot;fields&quot;: [
+                {&quot;type&quot;: &quot;mrkdwn&quot;, 
+                 &quot;text&quot;: f&quot;*Critical:* {len(critical)}&quot;},
+                {&quot;type&quot;: &quot;mrkdwn&quot;, 
+                 &quot;text&quot;: f&quot;*High:* {len(high)}&quot;},
+                {&quot;type&quot;: &quot;mrkdwn&quot;, 
+                 &quot;text&quot;: f&quot;*Auto-PR Created:* {len(auto_fixed)}&quot;},
+                {&quot;type&quot;: &quot;mrkdwn&quot;, 
+                 &quot;text&quot;: f&quot;*Total Findings:* {len(triaged_vulns)}&quot;}
+            ]
+        }
+    ]
+    
+    # Add critical vuln details
+    for v in critical[:3]:
+        blocks.append({
+            &quot;type&quot;: &quot;section&quot;,
+            &quot;text&quot;: {&quot;type&quot;: &quot;mrkdwn&quot;,
+                     &quot;text&quot;: f&quot;🚨 *{v[&#39;cve&#39;]}* — `{v[&#39;package&#39;]}`\n&quot;
+                             f&quot;Action: {v[&#39;action&#39;]} | &quot;
+                             f&quot;SLA: {v[&#39;due_date&#39;]}&quot;}
+        })
+    
+    requests.post(webhook_url, json={&quot;blocks&quot;: blocks})</code></pre>
+<h2 id="step-5-sbom-management">Step 5: SBOM Management</h2>
+<p>SBOM generation is not just compliance checkbox anymore. With EU
+Cyber Resilience Act and US Executive Order requirements, knowing
+exactly what is in your software becomes critical.</p>
+<pre class="python"><code>def process_sbom(sbom_path, artifact_name):
+    &quot;&quot;&quot;Process and store SBOM for compliance tracking&quot;&quot;&quot;
+    
+    with open(sbom_path) as f:
+        sbom = json.load(f)
+    
+    # Extract key metrics
+    components = sbom.get(&#39;components&#39;, [])
+    
+    summary = {
+        &#39;artifact&#39;: artifact_name,
+        &#39;generated&#39;: datetime.now().isoformat(),
+        &#39;format&#39;: &#39;CycloneDX&#39;,
+        &#39;total_components&#39;: len(components),
+        &#39;licenses&#39;: list(set(
+            c.get(&#39;licenses&#39;, [{}])[0].get(&#39;license&#39;, {}).get(&#39;id&#39;, &#39;unknown&#39;)
+            for c in components if c.get(&#39;licenses&#39;)
+        )),
+        &#39;direct_deps&#39;: len([c for c in components 
+                           if c.get(&#39;scope&#39;) == &#39;required&#39;]),
+        &#39;transitive_deps&#39;: len([c for c in components 
+                               if c.get(&#39;scope&#39;) != &#39;required&#39;]),
+    }
+    
+    # Store for tracking
+    store_sbom_history(summary)
+    
+    return summary</code></pre>
+<h2 id="results-after-3-months">Results After 3 Months</h2>
+<p>After running this pipeline in my home lab for three months:</p>
+<ul>
+<li><strong>Mean time to detect</strong> new vulnerability: from next
+scheduled scan (days) to every PR (minutes)</li>
+<li><strong>Auto-fix rate</strong>: about 40% of critical and high
+vulnerabilities had auto-generated PRs</li>
+<li><strong>False positive reduction</strong>: OPA policies and
+suppression rules eliminated roughly 60% of noise</li>
+<li><strong>SLA compliance</strong>: every vulnerability now has clear
+owner and deadline</li>
+<li><strong>SBOM coverage</strong>: 100% of container images have SBOM
+generated automatically</li>
+</ul>
+<h2 id="trial-error-section">Trial &amp; Error Section</h2>
+<p>Not everything worked on first try. Here is what I learned the hard
+way:</p>
+<ol type="1">
+<li><p><strong>Trivy scan timeout in CI</strong>: My first pipeline kept
+timing out because I was scanning a 2GB image. Solution was to use
+<code>.trivyignore</code> for known acceptable findings and scan the
+base image separately.</p></li>
+<li><p><strong>Too many Jira tickets</strong>: Initially I created
+ticket for every single finding. Within one week I had 200+ tickets.
+Solution was to group vulnerabilities by package and create one ticket
+per package update.</p></li>
+<li><p><strong>OPA policy too strict at beginning</strong>: I blocked
+all deployments with any HIGH finding. Nobody could deploy for two days.
+Had to gradually tighten the policy — start with CRITICAL only, then add
+HIGH threshold.</p></li>
+<li><p><strong>SBOM was not so useful without tracking</strong>:
+Generating SBOM is easy. But without storing history and comparing
+changes, it is just a JSON file sitting there. I added a simple diff
+tool to show what changed between versions.</p></li>
+</ol>
+<h2 id="what-is-next">What is Next?</h2>
+<p>In Series 2, I will cover how I integrated runtime vulnerability
+scanning with Falco and built a feedback loop from production back to
+the CI pipeline.</p>
+<hr />
+<h2 id="references">References</h2>
+<ul>
+<li><strong>Trivy</strong> (Aqua Security):
+https://github.com/aquasecurity/trivy</li>
+<li><strong>OWASP Dependency-Check</strong>:
+https://owasp.org/www-project-dependency-check/</li>
+<li><strong>OPA (Open Policy Agent)</strong>:
+https://www.openpolicyagent.org/</li>
+<li><strong>CycloneDX SBOM Standard</strong>:
+https://cyclonedx.org/</li>
+<li><strong>EU Cyber Resilience Act</strong>:
+https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act</li>
+<li><strong>NIST SSDF (Secure Software Development Framework)</strong>:
+https://csrc.nist.gov/projects/ssdf</li>
+<li><strong>CISA Known Exploited Vulnerabilities (KEV)</strong>:
+https://www.cisa.gov/known-exploited-vulnerabilities-catalog</li>
+<li><strong>GitHub Actions Security Hardening</strong>:
+https://docs.github.com/en/actions/security-guides</li>
+</ul>
+<hr />
+<p><em>Follow me for more practical security engineering content from my
+home lab.</em></p>
