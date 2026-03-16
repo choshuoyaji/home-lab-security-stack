@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 40px; color: #2c3e50; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; opacity: 0.9; }
+        .card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .metric { display: inline-block; text-align: center; padding: 15px 25px; }
+        .metric-value { font-size: 28px; font-weight: bold; color: #2c3e50; }
+        .metric-label { font-size: 12px; color: #999; text-transform: uppercase; }
+        .metric-trend { font-size: 14px; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 10px; text-align: left; font-size: 12px; text-transform: uppercase; color: #666; }
+        .section-title { font-size: 18px; font-weight: bold; color: #2c3e50; margin: 25px 0 10px 0; }
+        .footer { text-align: center; color: #999; font-size: 11px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Daily Marketing Analytics Report</h1>
+        <p>2026-03-16 | Takahiro Oda</p>
+    </div>
+
+    
+        <div style="background:#f0f8ff; padding:15px; border-radius:8px; margin:15px 0;">
+            <h3 style="margin:0 0 10px 0; color:#2c3e50;">📅 Today's Posting Schedule</h3>
+            <table style="width:100%;">
+                <tr><td style="padding:4px;">Medium</td><td style="font-weight:bold;">22:58 JST</td><td style="color:#666;">08:58 EST</td></tr>
+                <tr><td style="padding:4px;">LinkedIn</td><td style="font-weight:bold;">20:21 JST</td><td style="color:#666;">06:21 EST</td></tr>
+                <tr><td style="padding:4px;">dev.to</td><td style="font-weight:bold;">02:58 JST</td><td style="color:#666;">4h after Medium</td></tr>
+            </table>
+        </div>
+    
+        <div style="background:#fff8e1; padding:15px; border-radius:8px; margin:15px 0;">
+            <h3 style="margin:0 0 10px 0; color:#2c3e50;">🔥 Today's Recommended Topic</h3>
+            <p style="font-size:18px; font-weight:bold; color:#e67e22;">Product Security</p>
+            <p style="color:#666;">Score: 275.0 | Based on GitHub trending analysis</p>
+        </div>
+
+    <div class="section-title">📝 dev.to Performance</div>
+    <div class="card">
+        <div style="text-align:center;">
+            <div class="metric">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Total Views</div>
+                <div class="metric-trend"></div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Reactions</div>
+                <div class="metric-trend"></div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Comments</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">1</div>
+                <div class="metric-label">Articles</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">📰 Article Performance (dev.to)</div>
+    <div class="card" style="overflow-x:auto;">
+        <table>
+            <tr>
+                <th>Title</th>
+                <th style="text-align:center;">Published</th>
+                <th style="text-align:center;">Views</th>
+                <th style="text-align:center;">Reactions</th>
+                <th style="text-align:center;">Comments</th>
+            </tr>
+            
+        <tr>
+            <td style="padding:8px; border-bottom:1px solid #eee; font-size:13px;">[Detection Engineering in My Home Lab] Series 1 ~B</td>
+            <td style="padding:8px; border-bottom:1px solid #eee; text-align:center;">2026-03-15</td>
+            <td style="padding:8px; border-bottom:1px solid #eee; text-align:center; font-weight:bold;">0</td>
+            <td style="padding:8px; border-bottom:1px solid #eee; text-align:center;">0</td>
+            <td style="padding:8px; border-bottom:1px solid #eee; text-align:center;">0</td>
+        </tr>
+        </table>
+    </div>
+
+    <div class="section-title">📈 Medium Performance</div>
+    <div class="card">
+        <p style="color:#666;">Medium analytics require browser access. Stats will be populated when available.</p>
+        <p><strong>Profile:</strong> <a href="https://takahiro-oda.medium.com">takahiro-oda.medium.com</a></p>
+        <p><em>Tip: Check Medium Partner Program dashboard for detailed read/clap metrics.</em></p>
+    </div>
+
+    <div class="section-title">💼 LinkedIn Performance</div>
+    <div class="card">
+        <p style="color:#666;">LinkedIn analytics require browser access. Stats will be populated when available.</p>
+        <p><strong>Followers:</strong> 2,476+</p>
+        <p><em>Tip: Check LinkedIn Analytics → Content tab for post impressions and engagement.</em></p>
+    </div>
+
+    <div class="section-title">🔗 GitHub Repository</div>
+    <div class="card">
+        <p><strong>Repo:</strong> <a href="https://github.com/choshuoyaji/home-lab-security-stack">choshuoyaji/home-lab-security-stack</a></p>
+        <p><em>Check GitHub Insights → Traffic for clone/visitor stats.</em></p>
+    </div>
+
+    <div class="section-title">💡 Recommendations</div>
+    <div class="card">
+        <ul style="line-height:1.8;">
+            <li><strong>Best performing topic:</strong> Analyze which tags get most views and double down</li>
+            <li><strong>Cross-platform:</strong> Articles with GitHub code links tend to get more engagement</li>
+            <li><strong>Consistency:</strong> Daily posting builds momentum — keep the streak going</li>
+            <li><strong>Engagement:</strong> Reply to comments within 2 hours for algorithm boost</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>Generated automatically by Marketing Analytics Agent | 2026-03-16 09:51 JST</p>
+        <p>Medium: takahiro-oda.medium.com | dev.to: dev.to/takahiro_oda | GitHub: github.com/choshuoyaji</p>
+    </div>
+</body>
+</html>
