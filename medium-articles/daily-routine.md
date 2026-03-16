@@ -163,7 +163,26 @@ Every article must end with a "References" section linking to trusted official s
 - Short punchy sentences
 - Hashtags at the end (5-10 relevant tags)
 - Link to Medium article
+- **MUST include GitHub repo link**: https://github.com/choshuoyaji/home-lab-security-stack
+- Format example: "🔗 Full code & configs on GitHub: <repo link>"
 - 2,476 followers to engage
+
+### LinkedIn AI Detection Prevention (MANDATORY before posting)
+Before posting ANY LinkedIn content, run this checklist:
+1. **Read Takahiro's last 5 LinkedIn posts** — match tone, emoji usage, sentence structure
+2. **No AI-typical patterns**: 
+   - NO "In today's rapidly evolving..." / "In the ever-changing landscape..."
+   - NO "I'm excited to share..." / "I'm thrilled to announce..."
+   - NO perfect bullet point symmetry (vary lengths)
+   - NO "Key takeaways:" followed by perfect parallel structure
+   - NO overuse of "leverage", "utilize", "streamline", "empower"
+3. **Add human imperfections**:
+   - Occasional casual abbreviation (tbh, btw)
+   - One or two slightly informal expressions
+   - Reference specific personal experience ("spent 3 hours debugging this lol")
+   - Include a personal opinion that's slightly strong ("I think X is overrated")
+4. **Japanese-English naturalness**: Same subtle patterns as Medium articles (see style guide above)
+5. **Final AI-detection test**: Re-read the post. Would a human LinkedIn user flag this as AI? If yes, rewrite.
 
 ## Performance Analysis (DAILY — report to Slack #all-ai)
 Check daily on ALL platforms and report findings:
