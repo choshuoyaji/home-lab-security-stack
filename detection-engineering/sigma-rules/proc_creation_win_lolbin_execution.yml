@@ -1,0 +1,35 @@
+title: Suspicious LOLBin Execution with Network Activity
+id: b2c3d4e5-2345-6789-abcd-ef0123456789
+status: experimental
+description: |
+  Detects execution of Living-off-the-Land binaries with suspicious parameters
+  that may indicate malicious use. Tested with Sysmon + Wazuh pipeline.
+references:
+  - https://attack.mitre.org/techniques/T1218/
+  - https://lolbas-project.github.io/
+author: Takahiro Oda
+date: 2026/03/15
+tags:
+  - attack.defense_evasion
+  - attack.t1218
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_lolbin:
+    Image|endswith:
+      - '\mshta.exe'
+      - '\certutil.exe'
+      - '\regsvr32.exe'
+      - '\rundll32.exe'
+      - '\msiexec.exe'
+  selection_network:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+      - 'ftp://'
+  condition: selection_lolbin and selection_network
+falsepositives:
+  - Legitimate software installations
+  - Certificate operations with certutil
+level: high

@@ -1,0 +1,35 @@
+title: Suspicious Outbound Connection from System Process
+id: d4e5f6a7-4567-89ab-cdef-012345678901
+status: experimental
+description: |
+  Detects outbound network connections from system processes that
+  typically should not make external connections. Home lab tested with
+  Sysmon Event ID 3 forwarded to Wazuh.
+references:
+  - https://attack.mitre.org/techniques/T1071/
+author: Takahiro Oda
+date: 2026/03/15
+tags:
+  - attack.command_and_control
+  - attack.t1071
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  selection:
+    Image|endswith:
+      - '\notepad.exe'
+      - '\calc.exe'
+      - '\mspaint.exe'
+      - '\write.exe'
+    Initiated: 'true'
+  filter_local:
+    DestinationIp|startswith:
+      - '10.'
+      - '172.16.'
+      - '192.168.'
+      - '127.'
+  condition: selection and not filter_local
+falsepositives:
+  - Very unlikely for these processes
+level: high

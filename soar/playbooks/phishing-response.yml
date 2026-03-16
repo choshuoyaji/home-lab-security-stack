@@ -1,0 +1,102 @@
+# SOAR Playbook: Phishing Email Response
+# Platform: Shuffle SOAR
+# Author: Takahiro Oda
+# Tested in home lab with simulated phishing campaigns
+
+name: Phishing Email Response
+description: Automated response to suspected phishing emails
+trigger:
+  type: webhook
+  source: wazuh-alert
+  rule_id: 87100-87199  # Email security rules
+
+steps:
+  - name: extract_indicators
+    action: parse_email
+    inputs:
+      email_source: "{{ trigger.data.email }}"
+    outputs:
+      - sender_address
+      - subject
+      - urls
+      - attachments
+      - headers
+
+  - name: check_sender_reputation
+    action: virustotal_lookup
+    inputs:
+      domain: "{{ steps.extract_indicators.sender_address | domain }}"
+    outputs:
+      - reputation_score
+      - malicious_votes
+
+  - name: check_urls
+    action: urlhaus_lookup
+    parallel: true
+    for_each: "{{ steps.extract_indicators.urls }}"
+    inputs:
+      url: "{{ item }}"
+    outputs:
+      - is_malicious
+      - threat_type
+
+  - name: sandbox_attachments
+    action: any_run_sandbox
+    condition: "{{ steps.extract_indicators.attachments | length > 0 }}"
+    for_each: "{{ steps.extract_indicators.attachments }}"
+    inputs:
+      file: "{{ item }}"
+      timeout: 120
+    outputs:
+      - verdict
+      - iocs
+
+  - name: decision
+    action: evaluate
+    inputs:
+      conditions:
+        - "{{ steps.check_sender_reputation.malicious_votes > 3 }}"
+        - "{{ steps.check_urls | any('is_malicious', true) }}"
+        - "{{ steps.sandbox_attachments | any('verdict', 'malicious') }}"
+    outputs:
+      - is_threat
+      - confidence
+
+  - name: quarantine_email
+    action: exchange_quarantine
+    condition: "{{ steps.decision.is_threat == true }}"
+    inputs:
+      message_id: "{{ trigger.data.message_id }}"
+      reason: "Automated phishing detection"
+
+  - name: block_sender
+    action: update_blocklist
+    condition: "{{ steps.decision.confidence > 0.8 }}"
+    inputs:
+      type: email
+      value: "{{ steps.extract_indicators.sender_address }}"
+      source: "SOAR-auto"
+
+  - name: create_ticket
+    action: jira_create
+    condition: "{{ steps.decision.is_threat == true }}"
+    inputs:
+      project: SEC
+      type: Incident
+      priority: "{{ 'High' if steps.decision.confidence > 0.8 else 'Medium' }}"
+      summary: "Phishing: {{ steps.extract_indicators.subject }}"
+      description: |
+        Automated phishing detection triggered.
+        Sender: {{ steps.extract_indicators.sender_address }}
+        Confidence: {{ steps.decision.confidence }}
+        IOCs: {{ steps.sandbox_attachments.iocs | join(', ') }}
+
+  - name: notify_soc
+    action: slack_notify
+    inputs:
+      channel: "#security-alerts"
+      message: |
+        🚨 Phishing Alert ({{ steps.decision.confidence | percentage }})
+        From: {{ steps.extract_indicators.sender_address }}
+        Subject: {{ steps.extract_indicators.subject }}
+        Action: {{ 'Quarantined' if steps.decision.is_threat else 'Monitoring' }}

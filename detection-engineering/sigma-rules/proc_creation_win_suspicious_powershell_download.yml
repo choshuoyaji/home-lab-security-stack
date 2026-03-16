@@ -1,0 +1,40 @@
+title: Suspicious PowerShell Download Cradle
+id: a1b2c3d4-1234-5678-9abc-def012345678
+status: experimental
+description: |
+  Detects PowerShell commands commonly used as download cradles.
+  Built and tested in my home lab environment with Wazuh + OpenSearch.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://github.com/SigmaHQ/sigma
+author: Takahiro Oda
+date: 2026/03/15
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_cmd:
+    CommandLine|contains:
+      - 'Invoke-WebRequest'
+      - 'IWR '
+      - 'wget '
+      - 'curl '
+      - 'Net.WebClient'
+      - 'DownloadString'
+      - 'DownloadFile'
+      - 'Start-BitsTransfer'
+  selection_ps:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  condition: selection_cmd and selection_ps
+falsepositives:
+  - Legitimate admin scripts
+  - Package managers
+  - Software deployment tools
+level: medium

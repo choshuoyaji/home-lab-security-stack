@@ -1,0 +1,44 @@
+# Detection-as-Code Pipeline
+# Automatically validates and deploys Sigma rules to Wazuh/OpenSearch
+# Home Lab Setup by Takahiro Oda
+
+name: Detection Pipeline
+description: CI/CD pipeline for Sigma rule validation and deployment
+
+stages:
+  validate:
+    description: Validate Sigma rule syntax and schema
+    tools:
+      - sigma-cli check
+      - yamllint
+    config:
+      sigma_version: "0.22"
+      strict: true
+
+  convert:
+    description: Convert Sigma rules to target SIEM format
+    targets:
+      - backend: opensearch
+        pipeline: wazuh
+        output_dir: ../compiled/opensearch/
+      - backend: splunk
+        pipeline: default
+        output_dir: ../compiled/splunk/
+
+  test:
+    description: Run detection rules against sample data
+    test_data_dir: ../test-data/
+    expected_results: ../test-data/expected/
+
+  deploy:
+    description: Deploy validated rules to Wazuh
+    target: wazuh-manager
+    method: api
+    endpoint: "https://wazuh-manager:55000"
+    verify_ssl: false
+
+# Schedule
+schedule:
+  validate_on_push: true
+  full_test: daily
+  deploy: manual
