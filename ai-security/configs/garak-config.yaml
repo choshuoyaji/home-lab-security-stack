@@ -1,0 +1,24 @@
+---
+# Garak configuration for home lab LLM security testing
+# Target: Ollama running locally
+
+plugins:
+  generators:
+    ollama:
+      name: "llama3.1:8b"
+      api_base: "http://localhost:11434"
+
+  probes:
+    # OWASP LLM01: Prompt Injection
+    - encoding
+    - promptinject
+    # OWASP LLM01: Jailbreak
+    - dan
+    # OWASP LLM06: Data Leakage
+    - leakreplay
+    # OWASP LLM02: Insecure Output
+    - malwaregen
+
+  detectors:
+    - always.Pass
+    - toxicity.ToxicCommentModel

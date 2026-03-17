@@ -50,10 +50,12 @@ home-lab-security-stack/
 │   ├── vulnerability-response/  # Vuln management automation
 │   ├── sast-dast/           # Security testing pipelines
 │   └── docs/                # Product security docs
-├── ai-security/             # AI/ML security
-│   ├── llm-security/        # LLM security configurations
-│   ├── prompt-injection/    # Prompt injection test cases
-│   └── docs/                # AI security research
+├── ai-security/             # AI/ML security (NEW!)
+│   ├── scripts/             # Red team orchestrator, MCP auditor
+│   ├── guardrails/          # Input/output security guardrails
+│   ├── configs/             # Garak & CI/CD configs
+│   ├── tests/               # Guardrails unit tests
+│   └── llm-security/        # LLM security test cases
 ├── incident-response/       # IR & forensics
 │   ├── playbooks/           # IR playbooks
 │   ├── forensics/           # Forensic scripts
@@ -72,8 +74,8 @@ Each directory corresponds to an article series published on [Medium](https://ta
 | Security Monitoring in My Home Lab | Security Monitoring | Coming Soon |
 | EDR/XDR in My Home Lab | EDR/XDR | Coming Soon |
 | Cloud Security in My Home Lab | Cloud Security | Coming Soon |
-| Product Security in My Home Lab | Product Security | Coming Soon |
-| AI Security in My Home Lab | AI Security | Coming Soon |
+| Product Security in My Home Lab | Product Security | [Series 1: Vulnerability Response Pipeline](https://takahiro-oda.medium.com/product-security-in-my-home-lab-series-1-building-an-automated-vulnerability-response-pipeline-17a579462805) |
+| AI Security in My Home Lab | AI Security | Series 1: LLM Red Teaming (Publishing Today) |
 | Incident Response in My Home Lab | Incident Response | Coming Soon |
 
 ## 🏠 Home Lab Environment
@@ -88,7 +90,9 @@ Each directory corresponds to an article series published on [Medium](https://ta
 - **Virtualization**: Proxmox VE
 
 ## 🔗 References & Inspiration
-
+- [NVIDIA/garak](https://github.com/NVIDIA/garak) — LLM vulnerability scanner
+- [AgentSeal/agentseal](https://github.com/AgentSeal/agentseal) — AI agent security toolkit
+- [OWASP Top 10 for LLM](https://genai.owasp.org/llm-top-10/) — LLM application security risks
 - [SigmaHQ/sigma](https://github.com/SigmaHQ/sigma) — Generic Signature Format for SIEM Systems
 - [Shuffle/Shuffle](https://github.com/Shuffle/Shuffle) — Security automation platform
 - [wazuh/wazuh](https://github.com/wazuh/wazuh) — Open Source Security Platform

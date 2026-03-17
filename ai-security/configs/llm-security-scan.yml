@@ -1,0 +1,91 @@
+# .github/workflows/llm-security-scan.yml
+name: LLM Security Assessment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ai-apps/**'
+      - 'prompts/**'
+      - 'guardrails/**'
+  schedule:
+    - cron: '0 9 * * 1'
+
+jobs:
+  llm-red-team:
+    runs-on: ubuntu-latest
+    services:
+      ollama:
+        image: ollama/ollama:latest
+        ports:
+          - 11434:11434
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install garak
+          pip install -r requirements-security.txt
+
+      - name: Pull target model
+        run: |
+          curl -X POST http://localhost:11434/api/pull \
+            -d '{"name": "llama3.1:8b"}'
+
+      - name: Run prompt injection tests
+        run: |
+          python -m garak \
+            --model_type ollama \
+            --model_name llama3.1:8b \
+            --probes promptinject,encoding \
+            --report_prefix reports/prompt_injection
+
+      - name: Run jailbreak tests
+        run: |
+          python -m garak \
+            --model_type ollama \
+            --model_name llama3.1:8b \
+            --probes dan \
+            --report_prefix reports/jailbreak
+
+      - name: Run data leakage tests
+        run: |
+          python -m garak \
+            --model_type ollama \
+            --model_name llama3.1:8b \
+            --probes leakreplay \
+            --report_prefix reports/data_leakage
+
+      - name: Run guardrails unit tests
+        run: pytest tests/test_guardrails.py -v
+
+      - name: Generate assessment report
+        run: python scripts/llm-red-team.py --report-only
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-security-report
+          path: reports/
+
+      - name: Fail on critical findings
+        run: |
+          python -c "
+          import json
+          with open('reports/assessment_latest.json') as f:
+              report = json.load(f)
+          critical = [f for f in report['findings']
+                     if f['severity'] == 'CRITICAL']
+          if critical:
+              print(f'❌ {len(critical)} CRITICAL findings')
+              for c in critical:
+                  print(f'  - {c[\"probe\"]} ({c[\"owasp_category\"]})')
+              exit(1)
+          print('✅ No critical findings')
+          "
