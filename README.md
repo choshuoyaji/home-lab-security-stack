@@ -114,3 +114,8 @@ All content in this repository is based on experiments conducted in my personal 
 ---
 
 ⭐ **Star this repo** if you find it useful! Follow my journey on [Medium](https://takahiro-oda.medium.com) and [dev.to](https://dev.to/takahiro_oda).
+
+
+## 📚 Articles
+
+- **[2026-03-29]** [[Application Security in My Home Lab] Series 1 ~Building a Comprehensive SAST/DAST Pipeline with AI-Enhanced Vulnerability Detection~](articles/2026-03-29-application-security-in-my-home-lab-series-1-building-a-comprehensive-sastdast-pipeline-with-ai-enhanced-vulnerability-detection/) - Code examples and configurations
